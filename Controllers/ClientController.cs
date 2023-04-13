@@ -29,7 +29,7 @@ namespace ManagedIdentitySample.Client.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("success");
+            return Ok("success yeah!");
         }
 
         [HttpPost]
