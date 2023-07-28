@@ -1,0 +1,42 @@
+name: Trigger auto deployment for howang-app
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ testsc-202206150224 ]
+    paths:
+    - '**'
+    - '.github/workflows/howang-app-AutoDeployTrigger-735e6631-da8e-47d4-9461-a01d6f4173cd.yml'
+
+  # Allow mannually trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.HOWANGAPP_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: yaliacr.azurecr.io
+          registryUsername: ${{ secrets.HOWANGAPP_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.HOWANGAPP_REGISTRY_PASSWORD }}
+          containerAppName: howang-app
+          resourceGroup: howang-westeurope
+          imageToBuild: yaliacr.azurecr.io/howang-app:${{ github.sha }}
+          
+
+     
+
